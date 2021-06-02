@@ -12,6 +12,7 @@ import smtplib
 import ssl
 import numpy as np
 import plotly.express as px
+print('hello ')
 
 
 cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
