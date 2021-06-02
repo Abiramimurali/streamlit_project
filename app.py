@@ -600,12 +600,12 @@ def main():
         user = list(c_user.find({'email' : email_ver_otp}))[0]['name']
         post={"name":user}
         st.subheader("Order product")
-        img1=Image.open("Ac.jpg")
+        img1=Image.open("AC.jpg")
 
 
         img2=Image.open("phone4.jpg")
 
-        img3=Image.open("heater.jpeg")
+        img3=Image.open("Heater.jpeg")
 
         resizedImages=[]
 
