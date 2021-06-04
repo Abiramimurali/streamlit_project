@@ -67,7 +67,7 @@ details_TEMP="""
 
 def main():
    
-    menu = ["SignUp","Login",'Home', "user_data","Email Verification","Search","Order_Product","payment_page","product_cancellation","Product_Review",'Profile', "admin", "Sales_display", "about_us"]
+    menu = ["SignUp","Login",'Home', "user_data","Email Verification","Search","Forgot Password", "Order_Product","payment_page","product_cancellation","Product_Review",'Profile', "admin", "Sales_display", "about_us"]
     choice = st.sidebar.selectbox("Menu",menu)
 
     if choice == "Home":
@@ -177,7 +177,7 @@ def main():
             """, True)
             st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');st.text('');
             temp=[]
-            post={"name":"Ramu"}
+            post={"name":user}
             st.subheader("Order product")
             img3=Image.open("Mobile.jpg")
             img2=Image.open("Air Conditioner.jpg")
@@ -329,8 +329,6 @@ def main():
             submit_button = st.form_submit_button(label='Submit')
         
 
-        print(name,last,email,otp,pw1,pw2,ph,add)
-        print(submit_button)
         if(submit_button):
             if(c==False):
                 st.error("Please check aggree box")
@@ -378,7 +376,6 @@ def main():
             email=st.text_input("Email Address")
             check=st.form_submit_button("generate otp for verify your email address")
         if (check):
-            print('came')
             verification(email)
         with st.form(key='my-form'):
             st.info("Please check your email & enter the 4 digit pin")
@@ -386,17 +383,14 @@ def main():
             submit_button = st.form_submit_button(label='Submit')
         try:
             f = list(otp1.find())
-            print(list(f))
             f = f[0]['otp']
         except:
             pass
 
-        print(otp,f)
 
         if(otp==f) and (submit_button) :
             a1=otp1.find_one()
             a1=a1['email']
-            print(a1, 'this is a1')
             a2=c2.find_one({'email':a1})
             if(a2==None):
                 st.error("Please give registered email address")
@@ -482,7 +476,7 @@ def main():
 
         n=col.find({'email':email_ver_otp})
         n=list(n)
-        print(n)
+
         name1=n[0]['name']
         pw1=n[0]['password']
         ph1=n[0]['ph_no']
@@ -527,7 +521,7 @@ def main():
             p['password']=pw1 if(pw==None) or (pw=='') else pw
             p['ph_no']=ph1 if(ph==None) or (ph=='') else ph
             p['address']=loc1 if(add==None) or (add=='') else add
-            print(p)
+            
             col.update({'email':'abiramimurali103@gmail.com'},{'$set':p})
     
     elif choice == 'user_data':
@@ -599,12 +593,12 @@ def main():
         user = list(c_user.find({'email' : email_ver_otp}))[0]['name']
         post={"name":user}
         st.subheader("Order product")
-        img1=Image.open("Ac.jpg")
+        img1=Image.open("AC.jpg")
 
 
         img2=Image.open("phone4.jpg")
 
-        img3=Image.open("heater.jpeg")
+        img3=Image.open("Heater.jpeg")
 
         resizedImages=[]
 
@@ -648,7 +642,7 @@ def main():
             if(submit):
                 temp.append(post)
                 c.insert_one(post)
-                print(temp)
+            
                 st.success("Added to cart -> Proceed with payment")
 
 
@@ -690,19 +684,18 @@ def main():
                 brand="Bajaj"
             day=date.today().strftime("%m/%d/%Y")
             md={"name":d["name"],"product":d["product"],"quantity":d["quantity"],"brand":brand,"price":p,"date":day}
-            print(md)
+    
             l.append(md)
             
-        print(l)
+
         ld= pd.DataFrame(l)
-        print(ld)
+
             
-        print(l)   
-        #print(df)
+
         st.dataframe(ld.head(10))
 
         tp=sum(ld["price"])
-        #print(sum(tp))
+
 
         st.info("The total price of your cart  is %d"%(tp))
 
@@ -714,7 +707,50 @@ def main():
             c.remove({})
             st.success("Done with payment")
                 
-            
+    elif choice == 'Forgot Password':
+        gen1=0
+        client = pymongo.MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+        db=client["electronic_appliances"]
+        col=db["user_details"]
+        otpcollection = db['otp']
+        st.title("Forgot_password")
+        def verification(to):
+            global gen1
+            otpcollection.remove()
+            fromaddr = 'abirami.prodapt@gmail.com'
+            gen1=str(random.randint(1000,9999))
+            otpcollection.insert_one({'otp': gen1})
+            msg = 'Your 4 digit otp is '+str(gen1)
+            username = 'abirami.prodapt@gmail.com'  
+            password = 'Abirami103$'
+            server = smtplib.SMTP('smtp.gmail.com',587)  
+            server.starttls()
+            server.login(username, password)  
+            server.sendmail(fromaddr,to, msg)  
+        with st.form(key='my_form'):
+            email=st.text_input("Email address")
+            c=st.form_submit_button("Generate otp")
+        if c:   
+            verification(email)
+        with st.form(key='myform'):
+            otp=st.text_input("OTP")
+
+            st.info("Please check your email & enter the 4 digit pin")
+            p1=st.text_input("Create password")
+            p2=st.text_input("Confirm password")
+            submit=st.form_submit_button("submit")
+        firstotp = list(otpcollection.find({}))
+        firstotp = firstotp[0]['otp']
+        if(otp!=firstotp) and (submit):
+            st.warning("Incorrect OTP")
+        elif(p1!=p2) and (submit):
+            st.warning("Password doesn't match!")
+        elif (submit):
+            st.success("Password changed!")
+            a=col.find({'email':email})
+            a=list(a)
+            pw=p2
+            col.update_one({'email':email},{'$set':{'password':pw}})
         
     elif choice=="Search":
         stc.html(HTML_BANNER)
@@ -927,7 +963,6 @@ def main():
             ch,ch1,bl,sub = st.beta_columns(4)
             Add=ch.checkbox("I Agree")
             submit=sub.form_submit_button("Add")
-        print(p_id,p_name,p_cost,p_stock,discription,brand,Add,submit)
 
         if (p_stock and Add!=True):
             st.error("Check Add Box")
@@ -966,7 +1001,6 @@ def main():
             ch,bl,sub = st.beta_columns(3)
             Delete=ch.checkbox("I Agree")
             submit=sub.form_submit_button("Delete")
-        print(p_id,p_name,Delete,submit)
 
         if (p_name and Delete!=True):
             st.error("Check delete Box")
@@ -987,7 +1021,6 @@ def main():
             ch,bl,sub = st.beta_columns(3)
             Modify=ch.checkbox("I Agree")
             submit=sub.form_submit_button("Update")
-        print(p_id,p_cost,p_stock,Modify,submit)
 
         if (p_stock and Modify!=True):
             st.error("Check modify Box")
@@ -1008,9 +1041,7 @@ def main():
         n = c.find()
         #l=[n[i] for i in range(n.count())]
         n = [i['date'] for i in list(n)]
-        print(n)
         df=pd.DataFrame(n)
-        print(df)
         #st.title("Products graph")
         #n_count = {'Air Conditioner': n.count('Air Conditioner'), 'Mobile': n.count('Mobile'), 'Heater': n.count('Heater')}
         #fig = px.pie(df,values=list(n_count.values()), names=list(n_count.keys()), title='sale')
