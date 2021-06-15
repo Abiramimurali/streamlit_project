@@ -17,7 +17,6 @@ import time
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
-print('hello ')
 
 
 cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
@@ -73,7 +72,7 @@ details_TEMP="""
 
 def main():
    
-    menu = ["SignUp","Login",'Home', "user_data","Email Verification","Search","Forgot Password", "Order_Product","payment_page","product_cancellation","Product_Review",'Profile', "admin", "Visualisation", "about_us"]
+    menu = ["SignUp","Login",'Home', "user_data","Email Verification","Search","Forgot Password", "Order_Product","payment_page","product_cancellation","Product_Review",'Profile', "admin", "Sales_display","Visulization", "about_us"]
     choice = st.sidebar.selectbox("Menu",menu)
 
     if choice == "Home":
@@ -311,9 +310,6 @@ def main():
         client = pymongo.MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",ssl_cert_reqs=ssl.CERT_NONE)
         db=client["electronic_appliances"]
         col=db["sign_up"]
-
-        id=random.randint(1,100)
-
         st.title("Sign Up")
 
         with st.form(key='my_form'):
@@ -355,13 +351,11 @@ def main():
             c.append(b.day)
             d=time.localtime()
             e=time.strftime("%H:%M:%S",d)
-
             p['date']=c
             l=b.month
             p['month']=m[l]
             p['time']=e
             col.insert_one(p)
-         
 
     elif choice=="Email Verification": 
         stc.html(HTML_BANNER)
@@ -448,6 +442,8 @@ def main():
 
         if(c):
                 st.info("You can change the password by clicking -> Home choose -> Forgot password")
+
+
 
     elif choice == 'Profile':
         client = pymongo.MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",ssl_cert_reqs=ssl.CERT_NONE)
@@ -546,7 +542,7 @@ def main():
     
     elif choice == 'user_data':
         stc.html(HTML_BANNER)
-        cluster = MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+        cluster = MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",ssl_cert_reqs=ssl.CERT_NONE)
         db = cluster["electronic_appliances"]
         c=db["user_details"]
 
@@ -563,7 +559,7 @@ def main():
     elif choice== "Order_Product":
         stc.html(HTML_BANNER)
         temp=[]
-        cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+        cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',ssl_cert_reqs=ssl.CERT_NONE)
         db=cluster["electronic_appliances"]
         c=db["buffer"]
         c_user = db['user_details']
@@ -667,10 +663,9 @@ def main():
 
 
     elif choice=="payment_page":
-        cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+        cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',ssl_cert_reqs=ssl.CERT_NONE)
         db=cluster["electronic_appliances"]
         c=db["buffer"]
-
         ps=db['product_sale']
         c_user = db['user_details']
         email_ver_otp = list(db['email_ver_otp'].find())[0]['email']
@@ -706,16 +701,70 @@ def main():
                 brand="Bajaj"
             m=["",'January','February','March','April','May','June','July','August','September','October','Novermber','December']
             b=datetime.now()
-            c=[]
-            c.append(b.year)
-            c.append(b.month)
-            c.append(b.day)
-            d=time.localtime()
-            e=time.strftime("%H:%M:%S",d)
-            l=b.month
-            md={"name":d["name"],"product":d["product"],"quantity":d["quantity"],"brand":brand,"price":p,"date":c,'month':m[l]}
+            co=[]
+            co.append(b.year)
+            co.append(b.month)
+            co.append(b.day)
+            e=time.strftime("%H:%M:%S",time.localtime())
+            md={"name":d["name"],"product":d["product"],"quantity":d["quantity"],"brand":brand,"price":p,"date":co,'month':m[b.month]}
             l.append(md)
             ps.insert_one(md)
+
+        
+        # '''cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',ssl_cert_reqs=ssl.CERT_NONE)
+        # db=cluster["electronic_appliances"]
+        # c=db["buffer"]
+        # c_user = db['user_details']
+        # ps=['product_sale']
+        # email_ver_otp = list(db['email_ver_otp'].find())[0]['email']
+        # user = list(c_user.find({'email' : email_ver_otp}))[0]['name']
+        
+
+        # confirmed_ticket=db["confirmed_ticket"]
+        # coll_prod_details=db["product_details"]
+        # pro_d=coll_prod_details.find()
+
+        # price=[i["price"] for i in pro_d]
+
+        # email_ver_otp = list(db['email_ver_otp'].find())[0]['email']
+        # c_user = db['user_details']
+        # user = list(c_user.find({'email' : email_ver_otp}))[0]['name']
+        # post={"name":user}
+
+        # stc.html(HTML_BANNER)
+        # st.header("payment page")
+        # cart=c.find()
+        # #cart gives u a cursor object
+        # l=[]
+        # for i in range(cart.count()):
+        #     d=cart[i]
+        #     if(d["product"]=="Air Conditioner"):
+        #         p=int(price[1])*d["quantity"]
+        #         brand="Hitachi"
+        #     elif(d["product"]=="Mobile"):
+        #         p=int(price[2])*d["quantity"]
+        #         brand="iPhone"
+        #     else:
+        #         p=int(price[1])*d["quantity"]
+        #         brand="Bajaj"
+        #     m=["",'January','February','March','April','May','June','July','August','September','October','Novermber','December']
+        #     b=datetime.now()
+        #     c=[]
+        #     c.append(b.year)
+        #     c.append(b.month)
+        #     c.append(b.day)
+        #     d=time.localtime()
+        #     e=time.strftime("%H:%M:%S",d)
+        #     l=b.month
+        #     md={"name":d["name"],"product":d["product"],"quantity":d["quantity"],"brand":brand,"price":p,"date":c,'month':m[l]}
+        #     l.append(md)
+        #     ps.insert_one(md)
+     
+        
+    
+    
+            
+            
             
 
         ld= pd.DataFrame(l)
@@ -739,7 +788,7 @@ def main():
                 
     elif choice == 'Forgot Password':
         gen1=0
-        client = pymongo.MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+        client = pymongo.MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",ssl_cert_reqs=ssl.CERT_NONE)
         db=client["electronic_appliances"]
         col=db["user_details"]
         otpcollection = db['otp']
@@ -971,7 +1020,7 @@ def main():
                    
     elif choice=="admin":
         stc.html(HTML_BANNER)
-        cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+        cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',ssl_cert_reqs=ssl.CERT_NONE)
         db = cluster["electronic_appliances"]
         c=db["product_details"]
 
@@ -1065,7 +1114,7 @@ def main():
 
     elif choice =='Sales_display':
         stc.html(HTML_BANNER)
-        cluster = MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+        cluster = MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",ssl_cert_reqs=ssl.CERT_NONE)
         db = cluster["electronic_appliances"]
         c=db["confirmed_ticket"]
         n = c.find()
@@ -1119,7 +1168,7 @@ def main():
 
     elif choice =='Product_Review':
         stc.html(HTML_BANNER)
-        cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+        cluster = MongoClient('mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',ssl_cert_reqs=ssl.CERT_NONE)
         db = cluster['electronic_appliances']
         collection = db['product_details']
         c_user = db['user_details']
@@ -1238,15 +1287,142 @@ def main():
             collection.update_one({'p_name': choice}, {'$set': {'reviews': old_comments}})
             st.success('Review added!')
 
-    
-    
+    elif choice== "Visulization":
+        client = pymongo.MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",ssl_cert_reqs=ssl.CERT_NONE)
+        db=client["electronic_appliances"]
+        c1=db["user_details"]
+        c2=db['confirmed_ticket']
+        menu2=['','No. of New customers added in month wise','Total No. of Customers','Item sold in a month','Total sale']
+        choice = st.sidebar.selectbox("choose",menu2)
+        if choice=='No. of New customers added in month wise':
+            stc.html(HTML_BANNER)
+            n1=c1.find()
+            n2=list(n1)
+            month=[]
+            no_c=[]
+            for i in n2:
+                if i['month'] not in month:
+                    month.append(i['month'])
+
+            for i in month:
+                no_c.append(c1.find({'month':i}).count())
+            fig=go.Figure(data=[go.Pie(labels=month, values = no_c)])
+            st.plotly_chart(fig)
+        if choice=='Total No. of Customers':
+            stc.html(HTML_BANNER)
+            n1=c1.count()
+            st.markdown("""
+            <html>
+            <link rel="preconnect" href="https://fonts.gstatic.com">
+            <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+            <style>
+                    .user
+                    {
+                        background: #DEFFFD;
+                        background: -webkit-linear-gradient(right, #DEFFFD, #D6DFFF);
+                        background: -moz-linear-gradient(right, #DEFFFD, #D6DFFF);
+                        background: linear-gradient(to left, #DEFFFD, #D6DFFF);
+                        position: absolute;
+                        top: 0px;
+                        right: 0px;
+                        height: 40px;
+                        padding-left: 7px;
+                        padding-right: 7px;
+                        border-radius: 8px;
+                        border: 0.25px solid;
+                    }
+                    .username
+                    {
+                        font-family: 'Acme', sans-serif;
+                        font-size: 20px;
+                        line-height: 40px;
+                    }
+                </style>
+                <div class = 'n1'>
+                    <p class = 'n1'>Total No. of Customers %s</p>
+                </div>
+            </html>
+            """%n1, unsafe_allow_html=True)
+        if choice=='Item sold in a month':
+            stc.html(HTML_BANNER)
+            client = pymongo.MongoClient("mongodb+srv://abirami:mmakk2000@cluster0.8rqgg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",ssl_cert_reqs=ssl.CERT_NONE)
+            db=client["electronic_appliances"]
+            c2=db['confirmed_ticket']
+            n1=c2.find()
+            n2=list(n1)
+            month=[]
+            n=[]
+            n3=[]
+            qn=[]
+            for i in n2:
+                if i['month'] not in month:
+                    month.append(i['month'])
+            print(month)
+            for i in month:
+                n.append(c2.find({'month':i}))
+            print(n)
+            for i in n:
+                n3.append(list(i))
+            print('n3',n3)
+            for i in n3:
+                s=0
+                for j in  i:
+                    s+=j['quantity']
+                qn.append(s)
+            print(qn)
+
+            fig=go.Figure(data=[go.Pie(labels=month, values = qn)])
+            st.plotly_chart(fig)
+        if choice=='Total sale':
+            n=c2.find()
+            s=0
+            for i in n:
+                print(i)
+                s+=i['quantity']
+
+            print(s)
+            stc.html(HTML_BANNER)
+            st.markdown("""
+            <html>
+            <link rel="preconnect" href="https://fonts.gstatic.com">
+            <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+            <style>
+                    .user
+                    {
+                        background: #DEFFFD;
+                        background: -webkit-linear-gradient(right, #DEFFFD, #D6DFFF);
+                        background: -moz-linear-gradient(right, #DEFFFD, #D6DFFF);
+                        background: linear-gradient(to left, #DEFFFD, #D6DFFF);
+                        position: absolute;
+                        top: 0px;
+                        right: 0px;
+                        height: 40px;
+                        padding-left: 7px;
+                        padding-right: 7px;
+                        border-radius: 8px;
+                        border: 0.25px solid;
+                    }
+                    .username
+                    {
+                        font-family: 'Acme', sans-serif;
+                        font-size: 20px;
+                        line-height: 40px;
+                    }
+                </style>
+                <div class = 'n1'>
+                    <p class = 'n1'>Total Sale %s</p>
+                </div>
+            </html>
+            """%s, unsafe_allow_html=True)
+          
     
 
-        
+
+
+
+
+            
+
+
     
-                
-
-       
-
-         
 main()

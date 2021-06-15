@@ -1,0 +1,10 @@
+node('jenkins-slave') {
+    
+     stage('test pipeline') {
+        sh(script: """
+            echo "hello"
+            git clone https://github.com/Abiramimurali/streamlit_project.git
+            docker build . -t eapp1
+        """)
+    }
+}
